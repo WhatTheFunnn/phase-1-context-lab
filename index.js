@@ -1,18 +1,66 @@
-/* Your Code Here */
+function createEmployeeRecord(employeeArray) {
+    let employeeObject = {
+        firstName: employeeArray[0],
+        familyName: employeeArray[1],
+        title: employeeArray[2],
+        payPerHour: employeeArray[3],
+        timeInEvents: [],
+        timeOutEvents: []
+    }
+    return employeeObject
+}
 
-/*
- We're giving you this function. Take a look at it, you might see some usage
- that's new and different. That's because we're avoiding a well-known, but
- sneaky bug that we'll cover in the next few lessons!
+function createEmployeeRecords(employeeArrays) {
+    return employeeArrays.map(x => createEmployeeRecord(x))
+}
 
- As a result, the lessons for this function will pass *and* it will be available
- for you to use if you need it!
- */
+
+function createTimeInEvent(employeeObject, dateStamp) {
+    let timeData = dateStamp.split(" ")
+    let date = timeData[0]
+    let hour = parseInt(timeData[1])
+    let time = {
+        type: "TimeIn",
+        hour: hour,
+        date: date
+    }
+    employeeObject.timeInEvents.push(time)
+    return employeeObject
+}
+function createTimeOutEvent(employeeObject, dateStamp) {
+    let timeData = dateStamp.split(" ")
+    let date = timeData[0]
+    let hour = parseInt(timeData[1])
+    let time = {
+        type: "TimeOut",
+        hour: hour,
+        date: date
+    }
+    employeeObject.timeOutEvents.push(time)
+    return employeeObject
+}
+function hoursWorkedOnDate(employee, dateForm) {
+    let timeIn = employee.timeInEvents.find(function (e) {
+        return dateForm === e.date
+    })
+    let timeOut = employee.timeOutEvents.find(function (e) {
+        return dateForm === e.date
+    })
+    let clockInTime = parseInt(timeIn.hour)
+    let clockOutTime = parseInt(timeOut.hour)
+    return (clockOutTime - clockInTime) * .01
+}
+function wagesEarnedOnDate(employee, dateform) {
+    let pay = employee.payPerHour
+    return hoursWorkedOnDate(employee, dateform) * pay
+}
+
 
 const allWagesFor = function () {
     const eligibleDates = this.timeInEvents.map(function (e) {
         return e.date
     })
+
 
     const payable = eligibleDates.reduce(function (memo, d) {
         return memo + wagesEarnedOnDate.call(this, d)
